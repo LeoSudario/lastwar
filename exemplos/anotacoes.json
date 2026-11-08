@@ -1,0 +1,15 @@
+{
+  "descricao": "Imagem gerada artificialmente; não é uma captura do jogo.",
+  "configuracao": {"rank_left": 0.1, "score_left": 0.65, "rank_right": 0.95},
+  "jogadores": [
+    {"id": "1", "name": "DragonBR", "reserve": false},
+    {"id": "2", "name": "ShadowX", "reserve": false},
+    {"id": "3", "name": "LunaBR", "reserve": true}
+  ],
+  "imagens": [
+    {"arquivo": "ranking-ficticio.png", "linhas": [
+      {"name": "DragonBR", "score": 15000, "player_id": "1", "status": "Participou"},
+      {"name": "ShadowX", "score": 0, "player_id": "2", "status": "Possível ausência"}
+    ]}
+  ]
+}

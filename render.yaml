@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: last-war-battle-manager
+    runtime: docker
+    plan: free
+    healthCheckPath: /
+    envVars:
+      - key: OMP_THREAD_LIMIT
+        value: "1"

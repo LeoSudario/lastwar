@@ -1,0 +1,330 @@
+
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#10151c">
+  <title>Last War | Presenças e equipes</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand" aria-label="Last War, gestão de batalhas">
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 32 32" fill="none">
+          <path d="M16 2.5 27 6.5v8.7c0 6.3-4.1 11-11 14.3-6.9-3.3-11-8-11-14.3V6.5L16 2.5Z"
+            stroke="currentColor" stroke-width="1.5"/>
+          <path d="m9 11 2.9 10h2.2l1.9-6.3 1.9 6.3h2.2L23 11h-2.5l-1.6 6.3L17.1 11h-2.2l-1.8 6.3-1.6-6.3H9Z"
+            fill="currentColor"/>
+        </svg>
+      </span>
+      <span class="brand-name">
+        <strong>Last War</strong>
+        <small>Battle Manager</small>
+      </span>
+    </div>
+
+    <span class="topbar-divider" aria-hidden="true"></span>
+
+    <nav aria-label="Áreas">
+      <button class="nav active" data-page="attendance" aria-current="page">Presenças</button>
+      <button class="nav" data-page="teams">Equipes</button>
+    </nav>
+
+    <span class="local"><i aria-hidden="true"></i> Armazenamento local</span>
+  </header>
+
+  <main>
+    <div class="heading">
+      <div class="page-identity">
+        <div class="breadcrumb">
+          Central da aliança <span>/</span>
+          <span id="breadcrumbPage">Presenças</span>
+        </div>
+        <h1 id="title">Relatório de batalha</h1>
+        <p id="subtitle">Confira os rankings e registre a participação da aliança.</p>
+      </div>
+
+      <label class="event-select">
+        Evento
+        <select id="event">
+          <option value="desert">Tempestade do Deserto</option>
+          <option value="canyon">Guerra do Canyon</option>
+        </select>
+      </label>
+    </div>
+
+    <p id="message" role="status" aria-live="polite" class="message"></p>
+
+    <section id="attendance" aria-label="Controle de presenças">
+      <div class="toolbar attendance-toolbar">
+        <label class="date-field">
+          Data da batalha
+          <input id="date" type="date">
+        </label>
+
+        <button id="newBattle">Nova batalha</button>
+        <span class="toolbar-divider" aria-hidden="true"></span>
+
+        <label class="button upload-button">
+          <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
+            <path d="M10 13V3m0 0L6.5 6.5M10 3l3.5 3.5M4 12v3a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-3"
+              stroke="currentColor" stroke-width="1.5"
+              stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          Adicionar prints
+          <input id="images" type="file" accept="image/png,image/jpeg"
+            multiple class="file-input">
+        </label>
+
+        <button class="primary" id="analyze">Analisar prints</button>
+        <span class="spacer"></span>
+        <button id="saveBattle">Salvar histórico</button>
+        <button id="exportAttendance">Exportar CSV</button>
+      </div>
+
+      <div class="workspace-label">
+        <div>
+          <span class="workspace-indicator" aria-hidden="true"></span>
+          <strong>Área de revisão</strong>
+          <span class="workspace-hint">Prints e jogadores</span>
+        </div>
+        <span class="workspace-hint">
+          Selecione um jogador para localizar no print
+        </span>
+      </div>
+
+      <div class="workbench">
+        <!-- Painel esquerdo: prints -->
+        <section class="pane image-pane" aria-label="Visualizador de ranking">
+          <div class="pane-head image-head">
+            <div class="pane-title">
+              <span class="panel-emblem" aria-hidden="true">▤</span>
+              <div>
+                <h2>Relatório de guerra</h2>
+                <p id="imageName" class="image-name"></p>
+              </div>
+            </div>
+
+            <div class="image-controls">
+              <div class="image-pagination">
+                <button id="prev" aria-label="Print anterior">‹</button>
+                <span id="imageNumber">0 / 0</span>
+                <button id="next" aria-label="Próximo print">›</button>
+              </div>
+              <label>
+                Zoom
+                <input id="zoom" type="range" min="50" max="200"
+                  value="100" aria-label="Zoom do print">
+              </label>
+            </div>
+          </div>
+
+          <div id="imageViewport" class="image-viewport">
+            <button type="button" id="uploadZone" class="upload-zone">
+              <span class="upload-zone-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <path d="M12 16V4m0 0L8 8m4-4 4 4M5 16v3a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-3"
+                    stroke="currentColor" stroke-width="1.7"
+                    stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </span>
+              <strong>Adicione os prints do ranking</strong>
+              <span>Arraste as imagens ou clique para selecionar</span>
+              <small>PNG ou JPEG · até 20 MB por arquivo</small>
+            </button>
+
+            <div id="imageStage" class="image-stage">
+              <p class="empty">Adicione prints do ranking para começar.</p>
+            </div>
+          </div>
+
+          <details class="settings">
+            <summary>Configurar regiões de leitura</summary>
+            <p>Defina as colunas em porcentagem da largura do print. Exclua nível, posição e poder das regiões.</p>
+
+            <div class="settings-grid">
+              <label>Início dos nomes %<input id="rankLeft" type="number" min="0" max="99"></label>
+              <label>Fim dos nomes %<input id="nameRight" type="number" min="1" max="99"></label>
+              <label>Início dos pontos %<input id="scoreLeft" type="number" min="1" max="99"></label>
+              <label>Fim dos pontos %<input id="rankRight" type="number" min="1" max="100"></label>
+              <label>Confiança mínima %<input id="confidence" type="number" min="0" max="100"></label>
+              <label>Similaridade mínima %<input id="matchThreshold" type="number" min="85" max="100"></label>
+              <label>Margem mínima %<input id="matchMargin" type="number" min="8" max="100"></label>
+            </div>
+          </details>
+        </section>
+
+        <!-- Painel direito: jogadores -->
+        <section class="pane roster-pane" aria-label="Lista de jogadores">
+          <div class="pane-head roster-head">
+            <div class="pane-title">
+              <span class="panel-emblem" aria-hidden="true">✦</span>
+              <h2>Participantes <span id="playerCount" class="count"></span></h2>
+            </div>
+
+            <div class="roster-tools-head">
+              <label class="button">
+                Importar lista / CSV
+                <input type="file" id="csv" accept=".csv,text/csv" class="file-input">
+              </label>
+
+              <details class="roster-tools">
+                <summary>Gerenciar lista</summary>
+                <p>CSV com coluna <strong>nome</strong>.</p>
+                <form id="aliasForm">
+                  <label>
+                    Jogador
+                    <select id="aliasPlayer" aria-label="Jogador para aliases"></select>
+                  </label>
+                  <label>
+                    Aliases (separados por ;)
+                    <input id="aliasNames" autocomplete="off">
+                  </label>
+                  <button>Salvar aliases</button>
+                </form>
+              </details>
+            </div>
+          </div>
+          <!-- Fechamento corrigido do cabeçalho -->
+
+          <form id="playerForm" class="quick-add">
+            <label class="visually-hidden" for="playerName">Nome do jogador</label>
+            <input id="playerName" placeholder="Nome do jogador" required>
+            <button type="submit">+ Adicionar jogador</button>
+          </form>
+
+          <div id="summary" class="summary" aria-label="Resumo de presença"></div>
+
+          <div class="filters">
+            <label class="search-field">
+              <span class="visually-hidden">Buscar jogador</span>
+              <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                <circle cx="8.8" cy="8.8" r="5.3"
+                  stroke="currentColor" stroke-width="1.5"/>
+                <path d="m13 13 3.3 3.3"
+                  stroke="currentColor" stroke-width="1.5"
+                  stroke-linecap="round"/>
+              </svg>
+              <input id="search" type="search" placeholder="Buscar jogador">
+            </label>
+
+            <select id="filter" aria-label="Filtrar por status">
+              <option value="all">Todos os status</option>
+              <option>Presente</option>
+              <option>Ausente</option>
+              <option value="pending">Pendentes</option>
+            </select>
+          </div>
+
+          <div class="roster-columns" aria-hidden="true">
+            <span>Jogador</span>
+            <span>Pontos</span>
+            <span>Participação</span>
+            <span></span>
+          </div>
+
+          <div id="players" class="player-list"></div>
+
+          <div id="bulkBar" class="bulk-bar" hidden>
+            <span id="bulkCount" class="bulk-count">Nenhum jogador selecionado</span>
+            <button type="button" id="bulkPresent" data-bulk="Presente">Presente</button>
+            <button type="button" id="bulkAusente" data-bulk="Ausente">Ausente</button>
+            <button type="button" id="bulkRevisar" data-bulk="Revisar">Revisar</button>
+            <button type="button" id="bulkClear" data-bulk="Deselecionar">Deselecionar</button>
+          </div>
+        </section>
+      </div>
+
+      <details class="history">
+        <summary>
+          <span>
+            <strong>Histórico de batalhas</strong>
+            <small>Consulte e abra análises anteriores</small>
+          </span>
+        </summary>
+        <div id="history"></div>
+      </details>
+    </section>
+
+    <!-- Montagem de equipes -->
+    <section id="teams" hidden aria-label="Montagem de equipes">
+      <div class="toolbar team-toolbar">
+        <label>
+          Titulares
+          <input id="starterLimit" type="number" min="0" max="100" value="20">
+        </label>
+        <label>
+          Reservas
+          <input id="reserveLimit" type="number" min="0" max="100" value="10">
+        </label>
+        <button id="suggest" class="primary">Gerar formação</button>
+        <span class="spacer"></span>
+        <button id="copyTeam">Copiar lista</button>
+        <button id="exportTeam">Exportar CSV</button>
+      </div>
+
+      <div class="team-layout">
+        <div class="team-surface">
+          <div class="team-head">
+            <div>
+              <h2>Jogadores disponíveis</h2>
+              <p>Histórico de participação neste evento</p>
+            </div>
+            <div id="teamCounts" class="summary" aria-label="Limites da equipe"></div>
+          </div>
+
+          <form id="teamPlayerForm" class="quick-add">
+            <label class="visually-hidden" for="teamPlayerName">Nome do jogador</label>
+            <input id="teamPlayerName" placeholder="Nome do jogador" required>
+            <button type="submit">+ Adicionar jogador</button>
+          </form>
+
+          <p id="teamWarning" class="warning" role="status"></p>
+
+          <div class="filters team-filters">
+            <label class="search-field">
+              <span class="visually-hidden">Buscar jogador na equipe</span>
+              <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                <circle cx="8.8" cy="8.8" r="5.3"
+                  stroke="currentColor" stroke-width="1.5"/>
+                <path d="m13 13 3.3 3.3"
+                  stroke="currentColor" stroke-width="1.5"
+                  stroke-linecap="round"/>
+              </svg>
+              <input id="teamSearch" type="search" placeholder="Buscar jogador">
+            </label>
+          </div>
+
+          <div class="team-columns" aria-hidden="true">
+            <span>Jogador</span>
+            <span>Presenças</span>
+            <span>Ausências</span>
+            <span>Participação</span>
+            <span>Última presença</span>
+            <span>Sequência</span>
+            <span>Equipe</span>
+          </div>
+
+          <div id="teamList" class="team-list"></div>
+        </div>
+
+        <aside class="formation-panel">
+          <div class="formation-heading">
+            <span class="formation-emblem" aria-hidden="true">✦</span>
+            <div>
+              <h2>Formação da batalha</h2>
+              <p>Jogadores selecionados</p>
+            </div>
+          </div>
+          <div id="formation"></div>
+        </aside>
+      </div>
+    </section>
+  </main>
+
+  <script src="/static/review.js" defer></script>
+  <script src="/static/app.js" defer></script>
+</body>
+</html>

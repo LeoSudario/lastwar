@@ -1,0 +1,10 @@
+.git
+.venv
+.agents
+.opencode
+**/__pycache__
+**/*.pyc
+.env
+.env.*
+tests
+exemplos
